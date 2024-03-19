@@ -68,7 +68,7 @@ const DailyStandartPage = () => {
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <fieldset>
-          <p>Розрахунок нормі № 1 - загальновійськової</p>
+          <p>Розрахунок норми № 1 - загальновійськової</p>
           <input type="number" min="0" { ...register('dailyQuantity') } />
           <button type="submit">Submit</button>
         </fieldset>
