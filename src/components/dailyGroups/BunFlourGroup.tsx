@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import DailyListItem from "../DailyListItem";
-import { IDailyList, IDailyStandListItem } from "../../interfaces";
-import bunFlourNames from "../../vocabulary/bunFlourFields";
+import { IDailyList } from "../../interfaces";
 import { Food } from "../../vocabulary";
 
 

@@ -20,7 +20,7 @@ const DailyStandartPage = () => {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: {},
   } = useForm<Inputs>({ defaultValues: {guardQuantity: '456'} });
   
   const dailyQuantityInput = watch('dailyQuantity');
