@@ -7,6 +7,7 @@ import { Units } from "../vocabulary";
 import MainGroupsHolder from "../components/dailyGroups/MainGroupsHolder";
 import XLSXDownload from "../components/XLSXDownload";
 import parseFodListIntoXlsx from "../utils/parseFodListIntoXlsx";
+import GuardFieldset, { GuardFieldsetHandlerParams } from "../components/form/GuardFieldset";
 
 type Inputs = {
   dailyQuantity: string,
@@ -14,14 +15,16 @@ type Inputs = {
   isGuard: boolean
 };
 
+// TODO: create custom hool for daily calclulation
+
 const DailyStandartPage = () => {
   const [dailyList, setDailyList] = useState<IDailyList[]>([]);
   const {
     register,
     handleSubmit,
     watch,
-    formState: {},
-  } = useForm<Inputs>({ defaultValues: {guardQuantity: '456'} });
+    setValue,
+  } = useForm<Inputs>({ mode: 'onBlur', defaultValues: {guardQuantity: '456'} });
   
   const dailyQuantityInput = watch('dailyQuantity');
   const isGuard = watch('isGuard');
@@ -60,6 +63,12 @@ const DailyStandartPage = () => {
     setDailyList(calcSumFood(calculatedList, calculatedGuardList));
   };
   
+  const guardHandler = ({inputValue, checkValue}: GuardFieldsetHandlerParams) => {
+    setValue('guardQuantity', inputValue);
+    setValue('isGuard', checkValue);
+    calculateByQuantityStr();
+  };
+  
   useEffect(() => {
     calculateByQuantityStr();
   }, [dailyQuantityInput, guardQuantityInput, isGuard]);
@@ -73,18 +82,7 @@ const DailyStandartPage = () => {
           <button type="submit">Submit</button>
         </fieldset>
         <br />
-        <fieldset>
-          <p>
-            <label>
-              Враховуючи варту
-              <input type="checkbox" { ...register('isGuard') } />
-            </label>
-          </p>
-          <label htmlFor="guard">Варта на день:</label>
-          <div>
-            <input type="number" min="0" defaultValue={'456'} disabled={!isGuard} { ...register('guardQuantity') } />
-          </div>
-        </fieldset>
+        <GuardFieldset onChangeHandler={guardHandler} />
       </form>
       <MainGroupsHolder list={dailyList} />
       <XLSXDownload data={parseFodListIntoXlsx(dailyList)} titel="Скачати .xlsx" />

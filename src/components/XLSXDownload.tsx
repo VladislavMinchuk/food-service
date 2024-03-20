@@ -50,8 +50,6 @@ const XLSXDownload = ({ titel, data }: XLSXDownloadProps) => {
           },
         };
         
-        console.log(cellAdress, key, element);
-        
         
         if (cellAdress.c > 0 && cellAdress.r > 0) {
           element.s.alignment.vertical = 'center';
