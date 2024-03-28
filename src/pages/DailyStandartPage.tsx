@@ -3,14 +3,12 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import {
   FormControl,
   FormLabel,
-  FormErrorMessage,
-  FormHelperText,
   Box,
   Button,
   Input,
   Heading
 } from '@chakra-ui/react';
-import { Flex, Spacer } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { IDailyList } from "../interfaces";
 import { round, parseFodListIntoXlsx, calcDailyStandart, calcDailyGuard } from "../utils";
 import MainGroupsHolder from "../components/dailyGroups/MainGroupsHolder";
