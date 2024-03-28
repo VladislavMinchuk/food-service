@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { Checkbox, Input } from '@chakra-ui/react'
 
 type Inputs = {
   guardQuantity: string,
@@ -31,16 +32,20 @@ const GuardFieldset = ({ defaultValue = '456', onChangeHandler }: GuardFieldsetP
   
   return (
     <fieldset>
-      <p>
-        <label>
-          Враховуючи варту
-          <input type="checkbox" { ...register('isGuard') } />
-        </label>
-      </p>
-      <label htmlFor="guard">Варта на день:</label>
-      <div>
-        <input type="number" min="0" defaultValue={defaultValue} disabled={!isGuard} { ...register('guardQuantity') } />
-      </div>
+      <Checkbox { ...register('isGuard') }>
+        Враховуючи варту
+      </Checkbox>
+      <p><label htmlFor="guard">Варта на день: </label></p>
+      <Input
+        id="guard"
+        type="number"
+        borderColor={'blue.500'}
+        defaultValue={defaultValue}
+        placeholder="Варта на день"
+        min="0"
+        disabled={!isGuard}
+        { ...register('guardQuantity') }
+      />
     </fieldset>
   );
 };
