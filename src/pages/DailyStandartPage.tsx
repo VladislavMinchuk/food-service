@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { dailyStandList, dailyGuardList } from "../db/dailyStandart";
-import { IDailyList, IDailyStandListItem } from "../interfaces";
-import { kiloCalc, round } from "../utils";
-import { Units } from "../vocabulary";
+import {
+  FormControl,
+  FormLabel,
+  Box,
+  Button,
+  Input,
+  Heading
+} from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
+import { IDailyList } from "../interfaces";
+import { round, parseFodListIntoXlsx, calcDailyStandart, calcDailyGuard } from "../utils";
 import MainGroupsHolder from "../components/dailyGroups/MainGroupsHolder";
 import XLSXDownload from "../components/XLSXDownload";
-import parseFodListIntoXlsx from "../utils/parseFodListIntoXlsx";
+import GuardFieldset, { GuardFieldsetHandlerParams } from "../components/form/GuardFieldset";
 
 type Inputs = {
   dailyQuantity: string,
@@ -15,33 +22,22 @@ type Inputs = {
 };
 
 const DailyStandartPage = () => {
-  const [dailyList, setDailyList] = useState<IDailyList[]>([]);
   const {
     register,
     handleSubmit,
     watch,
-    formState: {},
-  } = useForm<Inputs>({ defaultValues: {guardQuantity: '456'} });
+    setValue,
+  } = useForm<Inputs>({ mode: 'onBlur', defaultValues: {guardQuantity: '456'} });
   
-  const dailyQuantityInput = watch('dailyQuantity');
   const isGuard = watch('isGuard');
-  const guardQuantityInput = watch('guardQuantity');
+  const dailyQuantityInput = parseInt(watch('dailyQuantity'));
+  const guardQuantityInput = parseInt(watch('guardQuantity'));
+  
+  const [dailyList, setDailyList] = useState<IDailyList[]>([]);
   
   const onSubmit: SubmitHandler<Inputs> = () => {
-    calculateByQuantityStr();
+    calculateByQuantity();
   }
-  
-  const calcDailyExpanse = (quantity: number, standartList: IDailyStandListItem[]): IDailyList[] => {
-    return standartList.map((item) => {
-      const calcValue = quantity * item.dailyValue || 0;
-      
-      if (item.unit === Units.pieces) {
-        return { ...item, calcValue: round(calcValue, 4) }
-      }
-      
-      return { ...item, calcValue: round(kiloCalc(calcValue), 4) }
-    });
-  };
   
   const calcSumFood = (standartList: IDailyList[], guardList: IDailyList[]): IDailyList[] => {
     return standartList.map((item) => {
@@ -51,44 +47,44 @@ const DailyStandartPage = () => {
     });
   };
   
-  const calculateByQuantityStr = (): void => {
-    const calculatedList = calcDailyExpanse(parseInt(dailyQuantityInput || ''), dailyStandList);
+  const calculateByQuantity = (): void => {
+    const daily = calcDailyStandart(dailyQuantityInput);
     // If no guard should return calculated daily list only
-    if (!isGuard) return setDailyList(calculatedList);
+    if (!isGuard) return setDailyList(daily);
     
-    const calculatedGuardList = calcDailyExpanse(parseInt(guardQuantityInput || ''), dailyGuardList);
-    setDailyList(calcSumFood(calculatedList, calculatedGuardList));
+    setDailyList(calcSumFood(daily, calcDailyGuard(guardQuantityInput)));
+  };
+  
+  const guardHandler = ({inputValue, checkValue}: GuardFieldsetHandlerParams) => {
+    setValue('guardQuantity', inputValue);
+    setValue('isGuard', checkValue);
   };
   
   useEffect(() => {
-    calculateByQuantityStr();
+    calculateByQuantity();
   }, [dailyQuantityInput, guardQuantityInput, isGuard]);
   
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset>
-          <p>Розрахунок норми № 1 - загальновійськової</p>
-          <input type="number" min="0" { ...register('dailyQuantity') } />
-          <button type="submit">Submit</button>
-        </fieldset>
-        <br />
-        <fieldset>
-          <p>
-            <label>
-              Враховуючи варту
-              <input type="checkbox" { ...register('isGuard') } />
-            </label>
-          </p>
-          <label htmlFor="guard">Варта на день:</label>
-          <div>
-            <input type="number" min="0" defaultValue={'456'} disabled={!isGuard} { ...register('guardQuantity') } />
-          </div>
-        </fieldset>
-      </form>
-      <MainGroupsHolder list={dailyList} />
+    <Box p={4}>
+      <Heading as="h1" mb="2" size="lg">Розрахунок норми № 1 - загальновійськової</Heading>
+      <Box mb={4}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormControl isRequired>
+            <FormLabel>Кількість добовидач</FormLabel>
+            <Flex>
+              <Input borderRightRadius={0} borderColor={'blue.500'} type="number" placeholder="Кількість добовидач" min="0" { ...register('dailyQuantity') } />
+              <Button colorScheme='blue' borderLeftRadius={0} type="submit">Submit</Button>
+            </Flex>
+          </FormControl>
+          <br />
+          <GuardFieldset onChangeHandler={guardHandler} />
+        </form>
+      </Box>
+      <Box mb={4}>
+        <MainGroupsHolder list={dailyList} />
+      </Box>
       <XLSXDownload data={parseFodListIntoXlsx(dailyList)} titel="Скачати .xlsx" />
-    </div>
+    </Box>
   );
 };
 

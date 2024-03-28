@@ -1,4 +1,5 @@
 import * as XLSX from 'xlsx-js-style';
+import { Button } from '@chakra-ui/react'
 
 export type XLSXDownloadProps = {
   data: Object[],
@@ -50,8 +51,6 @@ const XLSXDownload = ({ titel, data }: XLSXDownloadProps) => {
           },
         };
         
-        console.log(cellAdress, key, element);
-        
         
         if (cellAdress.c > 0 && cellAdress.r > 0) {
           element.s.alignment.vertical = 'center';
@@ -66,7 +65,7 @@ const XLSXDownload = ({ titel, data }: XLSXDownloadProps) => {
   
   return (
     <div style={{ marginBottom: '20px' }}>
-      <button type='button' onClick={downloadHandler}>{ titel }</button>
+      <Button type='button' colorScheme='blue' onClick={downloadHandler}>{ titel }</Button>
     </div>
   );
 };

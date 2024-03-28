@@ -1,3 +1,5 @@
+import { numberWithSpaces } from "../utils";
+
 type DailyListItemProps = {
   name: string,
   unit: string,
@@ -6,8 +8,9 @@ type DailyListItemProps = {
 };
 
 const DailyListItem = ({ name, value, unit, children }: DailyListItemProps) => {
+  const formatValue = numberWithSpaces(value || 0);
   return (
-    <li>{value || 0} {unit} - {name} {children}</li>
+    <li>{formatValue} {unit} - {name} {children}</li>
   );
 };
 

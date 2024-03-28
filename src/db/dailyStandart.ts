@@ -85,7 +85,7 @@ export const dailyStandList: IDailyStandListItem[] = [
   },
   {
     name: Food.eggs,
-    dailyValue: 0.28, // штук
+    dailyValue: 0.28571429, // штук
     unit: Units.pieces
   },
   {
@@ -228,7 +228,3 @@ export const dailyGuardList: IDailyStandListItem[] = [
     unit: Units.kilo
   },
 ];
-
-// const dailyStandListWithNaming: IDailyStandObj = addUnitsToFood(mapVocabulary(vocabulary, dailyStandList));
-
-// export default dailyStandList;
