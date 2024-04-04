@@ -64,9 +64,9 @@ const XLSXDownload = ({ titel, data }: XLSXDownloadProps) => {
   };
   
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <>
       <Button type='button' colorScheme='blue' onClick={downloadHandler}>{ titel }</Button>
-    </div>
+    </>
   );
 };
 

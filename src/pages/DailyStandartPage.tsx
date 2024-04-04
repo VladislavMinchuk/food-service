@@ -6,9 +6,12 @@ import {
   Box,
   Button,
   Input,
-  Heading
+  Heading,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import { Flex } from '@chakra-ui/react';
+import { Link as ReactRouterLink } from 'react-router-dom';
 import { IDailyList } from "../interfaces";
 import { round, parseFodListIntoXlsx, calcDailyStandart, calcDailyGuard } from "../utils";
 import MainGroupsHolder from "../components/dailyGroups/MainGroupsHolder";
@@ -34,6 +37,8 @@ const DailyStandartPage = () => {
   const guardQuantityInput = parseInt(watch('guardQuantity'));
   
   const [dailyList, setDailyList] = useState<IDailyList[]>([]);
+  
+  const issuanceURLquery = `?dailyValue=${dailyQuantityInput || 0}&guardValue=${isGuard ? guardQuantityInput : 0}`;
   
   const onSubmit: SubmitHandler<Inputs> = () => {
     calculateByQuantity();
@@ -83,7 +88,23 @@ const DailyStandartPage = () => {
       <Box mb={4}>
         <MainGroupsHolder list={dailyList} />
       </Box>
-      <XLSXDownload data={parseFodListIntoXlsx(dailyList)} titel="Скачати .xlsx" />
+      <Wrap spacing={4}>
+        <WrapItem>
+          <XLSXDownload data={parseFodListIntoXlsx(dailyList)} titel="Скачати .xlsx" />
+        </WrapItem>
+        <WrapItem>
+          <Button
+            as={ReactRouterLink}
+            to={{
+              pathname: '/issuance',
+              search: issuanceURLquery
+            }}
+            colorScheme="green"
+          >
+            Сформувати видачу
+          </Button>
+        </WrapItem>
+      </Wrap>
     </Box>
   );
 };
